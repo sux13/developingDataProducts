@@ -1,0 +1,28 @@
+.reveal section del {
+  color: #DB641D;
+  font-weight: 500;
+}
+
+.reveal h3{
+	color: #25679E;
+	font-weight: 900;
+}
+
+p{
+	color: #888;
+	font-weight: 100;
+}
+
+.MathJax{
+	color: black;
+}
+
+.reveal small{
+	margin-left: 20px;
+	margin-bottom: 10px;
+}
+
+.reveal strong{
+  color: black;
+
+}

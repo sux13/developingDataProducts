@@ -1,0 +1,67 @@
+Developing Data Products Course Project
+========================================================
+author: Xing Su
+date: February 19, 2015
+
+Estimating Variance
+========================================================
+transition: rotate
+**Variance** is a statistical measure of spread of a given distribution.
+
+For a discrete variable $X$, variance is calculated by
+
+$$\sigma^2 =\frac{1}{n}\sum_{i=1}^n (X_i - \bar X)^2$$
+
+where $X_i$ represents the observations, $\bar X$ represents the mean, and $n$ represents number of observations.
+
+Since we rarely know the population statistics and are often provided with only a sample, we can estimate it using the ~~sample statistics~~.
+
+Why does dividing by n-1 make the estimator unbiased?
+========================================================
+
+There are **two** ways of estimating the population variance using a sample:
+
+$$S^2_{unbiased} = \frac{\sum_{i=1}^n (X_i - \bar X)^2}{n-1} ~~~\mbox{and}~~~ S^2_{biased} = \frac{\sum_{i=1}^n (X_i - \bar X)^2}{n}$$
+
+The **unbiased estimator** is more commonly used and is a ~~better~~ estimate. The only difference between the two calculations is the denominator--so ***why does dividing by $n-1$ make the estimator unbiased and better?***
+
+To show this empirically, we will leverage a [Shiny Application](https://sxing.shinyapps.io/courseProject/) to simulate and analyze the variance estimates.
+
+
+Shiny App
+========================================================
+
+The ~~Simulation Experiment~~ will perform the following:
+
+<small>1. create a population distribution by drawing a number of observations from values 1 to 20</small>
+<small>2. draw a number of samples of specified size from the population</small>
+<small>3. compare the individual sample variances and the true population variance</small>
+<small>4. show the effects of sample size vs accuracy of variance estimated</small>
+
+The user will be able to control the **number of oberservations**, **number of samples**, and **sample size** to generate relevant plots using `ggplot2` and Google visualiztions.
+
+Graphing Example
+========================================================
+**Google Visualization Plot Example from Shiny App:**
+```{r results='asis', echo=FALSE}
+library(googleVis)
+pop <- sample(1:20, 500, replace = TRUE)
+sample<- as.data.frame(matrix(sample(pop,10000,replace = TRUE), nrow = 1000,ncol = 10))
+estVar <- data.frame(estVar = rowSums((sample-rowMeans(sample))^2)/length(sample))
+popHist <- gvisHistogram(estVar, options = list(
+    height = "200px", legend = "{position: 'none'}", title = "Distribution of Biased Sample Variances", histogram = "{ hideBucketItems: true, bucketSize: 2 }",hAxis = "{ title: 'Values', showTextEvery: 3}", vAxis = "{ title: 'Frequency'}"))
+print(popHist, "chart")
+```
+**`ggplot2` Plot Example from Shiny App:**
+```{r results='asis', echo=FALSE, fig.width = 12, fig.height = 4}
+library(ggplot2)
+difference <- estVar - var(pop)
+difference <- cbind(index = 1:nrow(difference), difference)
+varPlot <- ggplot(data = difference, aes(x = index, y = estVar)) +
+    geom_point() +
+    geom_hline(yintercept=0, col = "orange", size = 2) + geom_smooth() +
+    ggtitle("Difference Between Population and Biased Sample Variances") +
+    labs(x = "Sample", y = "Biased Variance - Population Variance")
+print(varPlot)
+```
+
